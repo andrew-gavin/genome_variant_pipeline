@@ -107,7 +107,7 @@ if [[ "$READS" == "short" ]]; then
 	bwa-mem2 mem -t "$THREADS" "$REF" "$R1_CLEAN" "$R2_CLEAN" \
 		| samtools view -b -@ "$THREADS" -o "$OD/aligned.bam" -
 else
-	minimap2 -t "$THREADS" -x map-ont "$REF" "$R1_CLEAN" \
+	minimap2 -t "$THREADS" -ax map-ont "$REF" "$R1_CLEAN" \
 		| samtools view -b -@ "$THREADS" -o "$OD/aligned.bam" -
 fi
 
