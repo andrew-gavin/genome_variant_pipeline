@@ -1,7 +1,7 @@
-# Genome Variant Pipeline (learning project)
-
- **Status:** Ongoing  
+# Genome Variant Pipeline (WIP)
+  
 This repo is a personal learning project to explore building a simple genomic variant pipeline in Docker.
+Still ongoing
 
 ## Aim
 Combined pipeline variant calling for both Long (ONT) and Short reads technologies
