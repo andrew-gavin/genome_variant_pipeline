@@ -152,7 +152,7 @@ else
 	
 	# run clair3
 	run_clair3.sh \
-		--bam_fn="$OD/dedup.bam" \
+		--bam_fn="$OD/final.bam" \
 		--ref_fn="$REF" \
 		--threads="$THREADS" \
 		--platform=ont \
