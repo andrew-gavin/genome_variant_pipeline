@@ -107,7 +107,7 @@ if [[ "$READS" == "short" ]]; then
 	bwa-mem2 mem -t "$THREADS" "$REF" "$R1_CLEAN" "$R2_CLEAN" \
 		| samtools view -b -@ "$THREADS" -o "$OD/aligned.bam" -
 else
-	minimap2 -t "$THREADS" -ax map-ont "$REF" "$R1_CLEAN" \
+	minimap2 -t "$THREADS" -Y -ax map-ont "$REF" "$R1_CLEAN" \
 		| samtools view -b -@ "$THREADS" -o "$OD/aligned.bam" -
 fi
 
@@ -121,7 +121,7 @@ samtools sort -@ "$THREADS" -o "$OD/aligned.sorted.bam" "$OD/aligned.bam"
 rm -f "$OD/aligned.bam"
 
 
-echo "[4.5/7] Deduplicating (short reads only)"
+echo "[4.5/7] Deduplicating (short reads only) and indexing"
 
 if [[ "$READS" == "short" ]]; then
 	samtools fixmate -@ "$THREADS" -m "$OD/aligned.sorted.bam" "$OD/fixed.bam"
@@ -158,7 +158,7 @@ else
 		--platform=ont \
 		--model_path="$MODEL_PATH" \
 		--output="$OD_ABS/clair3" 
-	cp "$OD/clair3/merge_output.vcf.gz" "$OD/variants.vcf.gz
+	cp "$OD/clair3/merge_output.vcf.gz" "$OD/variants.vcf.gz"
 	tabix -p vcf "$OD/variants.vcf.gz"
 fi
 
