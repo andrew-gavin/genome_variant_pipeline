@@ -12,6 +12,7 @@ R2=""
 READS="short" # short or long
 MINLEN=1000
 MINQ=7
+MINDP=5
 FILTLONG_KEEP=0.9
 CLAIR3_MODEL="r1041_e82_400bps_sup_v500"
 OUTDIR="results"
@@ -28,6 +29,7 @@ while [[ $# -gt 0 ]]; do
 		--threads) THREADS="$2"; shift 2 ;;
 		--minlen) MINLEN="$2"; shift 2 ;;
 		--minq) MINQ="$2"; shift 2 ;;
+		--mindp) MINDP="$2": shift 2 ;;
 		--filtlong_keep) FILTLONG_KEEP="$2"; shift 2 ;;
 		--clair3_model) CLAIR3_MODEL="$2"; shift 2 ;;
 		*) echo "Unknown arg: $1" >&2; exit 1 ;;
@@ -117,14 +119,14 @@ fi
 
 echo "[4/7] Sorting reads"
 
-samtools sort -@ "$THREADS" -o "$OD/aligned.sorted.bam" "$OD/aligned.bam"
+samtools sort -n -@ "$THREADS" -o "$OD/aligned.sorted.bam" "$OD/aligned.bam"
 rm -f "$OD/aligned.bam"
 
 
 echo "[4.5/7] Deduplicating (short reads only) and indexing"
 
 if [[ "$READS" == "short" ]]; then
-	samtools fixmate -@ "$THREADS" -m "$OD/aligned.sorted.bam" "$OD/fixed.bam"
+	samtools fixmate -m -@ "$THREADS" -m "$OD/aligned.sorted.bam" "$OD/fixed.bam"
 	samtools sort -@ "$THREADS" -o "$OD/fixed.sorted.bam" "$OD/fixed.bam"
 	samtools markdup -@ "$THREADS" -s "$OD/fixed.sorted.bam" "$OD/dedup.bam"
 	mv "$OD/dedup.bam" "$OD/final.bam"
@@ -143,7 +145,7 @@ echo "[6/7] Variant calling"
 if [[ "$READS" == "short" ]]; then
 	 bcftools mpileup -Ou -f "$REF" "$OD/final.bam" \
 		| bcftools call -Ou -mv \
-		| bcftools filter -s LowQual -e '%QUAL<10 || DP<5' -Oz -o "$OD/variants.vcf.gz"
+		| bcftools filter -s LowQual -i "QUAL>=${MINQ} && INFO/DP>=${MINDP}" -Oz -o "$OD/variants.vcf.gz"
 	tabix -p vcf "$OD/variants.vcf.gz"
 else
 	OD_ABS="$(cd "$OD"; pwd)" # clair3 recomends absolute paths
