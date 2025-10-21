@@ -45,3 +45,5 @@ run-long: build
 	  --minq $(MINQ) \
 	  --clair3_model $(CLAIR3_MODEL) \
 
+help:
+	docker run --rm  $(IMAGE_NAME):$(TAG) --help
