@@ -61,6 +61,7 @@ OPTIONAL - Filtering (VCF files)
 	--mindp INT		Min depth cutoff (INFO/DP for short; FMT/DP for long)
 				[default: 5]
 OTHER
+
 	--threads INT		Threads [default: 4]
 	--OUTDIR PATH		Output directory
 	--help (-h)		Shows this message
